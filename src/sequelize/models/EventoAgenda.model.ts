@@ -1,4 +1,5 @@
 import { Sequelize, Model, DataTypes } from "sequelize";
+import { now } from "sequelize/types/lib/utils";
 
 export default (sequelize: Sequelize) => {
   class EventoAgenda extends Model {
@@ -33,16 +34,22 @@ export default (sequelize: Sequelize) => {
       dataAgendadaEvento: {
         type: DataTypes.DATE,
         allowNull: false,
+        validate: {
+          isAfter: {
+            msg: "A data do evento não poderá ser inferior à data de hoje.",
+            args: Date().toString(),
+          },
+        },
       },
       descricaoEvento: {
-          type: DataTypes.STRING,
-          allowNull: false
-      }
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       sequelize,
       tableName: "EventosAgenda",
-    }    
+    }
   );
 
   return EventoAgenda;
