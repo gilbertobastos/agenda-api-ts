@@ -4,7 +4,7 @@
   "description": "Uma espécie de agenda consumida via API.",
   "main": "index.ts",
   "scripts": {
-    "test": "ts-dev-node index.ts",
+    "test": "ts-node-dev index.ts",
     "build": "tsc",
     "start": "tsc | node index.ts"
   },
