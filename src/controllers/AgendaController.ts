@@ -1,10 +1,34 @@
 import { Request, Response } from "express";
 import { EventoAgenda } from "../sequelize/index";
-import { Error } from "sequelize";
+import { Op } from "sequelize";
 
 export async function getConsultarEventos(req: Request, res: Response) {
-  const eventosAgenda = await EventoAgenda.findAll();
-  res.status(200).send(eventosAgenda).end();
+  let parametrosFiltro = { de: req.body.de, para: req.body.para };
+
+  if (parametrosFiltro.de && parametrosFiltro.para) {
+    try {
+      let eventosFiltrados = await EventoAgenda.findAll({
+        where: {
+          dataAgendadaEvento: {
+            [Op.between]: [
+              new Date(parametrosFiltro.de),
+              new Date(parametrosFiltro.para),
+            ],
+          },
+        },
+      });
+
+      res.status(200).send(eventosFiltrados);
+    } catch (e) {
+      res.status(400).send({
+        erro: e.name,
+        mensagem: e.message,
+      });
+    }
+  } else {
+    res.status(200).send(await EventoAgenda.findAll());
+  }
+  res.end();
 }
 
 export async function postAdicionarEvento(req: Request, res: Response) {
