@@ -51,3 +51,40 @@ export async function postAdicionarEvento(req: Request, res: Response) {
     res.end();
   }
 }
+
+export async function deleteDeletarEvento(req: Request, res: Response) {
+  let idEventoASerDeletado = req.body.id;
+
+  if (!Number.isInteger(idEventoASerDeletado)) {
+    res
+      .status(400)
+      .send({
+        mensagem:
+          "Id informado inválido. Por favor informar um id numérico e inteiro.",
+      })
+      .end();
+    return;
+  }
+
+  try {
+    let eventoAgenda = await EventoAgenda.findByPk(idEventoASerDeletado);
+
+    if (!eventoAgenda) {
+      res
+        .status(400)
+        .send({
+          mensagem: "Não foi localizado nenhum evento com o id informado.",
+        });
+    } else {
+      eventoAgenda.destroy();
+      res.status(200);
+    }
+  } catch (e) {
+    res.status(400).send({
+      erro: e.name,
+      mensagem: e.message,
+    });
+  } finally {
+    res.end();
+  }
+}
